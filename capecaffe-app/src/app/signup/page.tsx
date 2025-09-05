@@ -64,24 +64,33 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-stone-50 via-amber-50 to-stone-100">
       <Navbar />
       
-      <div className="flex items-center justify-center min-h-screen px-4 py-12">
+      {/* Decorative background orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-amber-300/30 blur-3xl"></div>
+        <div className="absolute top-40 -right-20 h-80 w-80 rounded-full bg-orange-300/20 blur-[80px]"></div>
+        <div className="absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-stone-300/20 blur-3xl"></div>
+      </div>
+
+      <div className="flex items-center justify-center min-h-screen px-4 py-16">
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-amber-900 mb-2">Join Cape Caffe</h1>
-            <p className="text-amber-700">Create your account and start your coffee journey</p>
+            <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-stone-900 via-amber-900 to-stone-900 bg-clip-text text-transparent mb-2">
+              Join Cape Caffe
+            </h1>
+            <p className="text-stone-600">Create your account and start your coffee journey</p>
           </div>
 
           {/* Signup Form */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-amber-200">
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/40 ring-1 ring-white/50">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-amber-800 mb-2">
+                  <label htmlFor="firstName" className="block text-sm font-medium text-stone-700 mb-2">
                     First Name
                   </label>
                   <input
@@ -90,8 +99,8 @@ export default function SignupPage() {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition ${
-                      errors.firstName ? 'border-red-300' : 'border-amber-300'
+                    className={`w-full px-4 py-3 border rounded-xl bg-white/60 placeholder-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-600 focus:border-transparent transition ${
+                      errors.firstName ? 'border-red-300' : 'border-stone-200'
                     }`}
                     placeholder="John"
                   />
@@ -101,7 +110,7 @@ export default function SignupPage() {
                 </div>
                 
                 <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-amber-800 mb-2">
+                  <label htmlFor="lastName" className="block text-sm font-medium text-stone-700 mb-2">
                     Last Name
                   </label>
                   <input
@@ -110,8 +119,8 @@ export default function SignupPage() {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition ${
-                      errors.lastName ? 'border-red-300' : 'border-amber-300'
+                    className={`w-full px-4 py-3 border rounded-xl bg-white/60 placeholder-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-600 focus:border-transparent transition ${
+                      errors.lastName ? 'border-red-300' : 'border-stone-200'
                     }`}
                     placeholder="Doe"
                   />
@@ -123,7 +132,7 @@ export default function SignupPage() {
 
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-amber-800 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-2">
                   Email Address
                 </label>
                 <input
@@ -132,8 +141,8 @@ export default function SignupPage() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition ${
-                    errors.email ? 'border-red-300' : 'border-amber-300'
+                  className={`w-full px-4 py-3 border rounded-xl bg-white/60 placeholder-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-600 focus:border-transparent transition ${
+                    errors.email ? 'border-red-300' : 'border-stone-200'
                   }`}
                   placeholder="john@example.com"
                 />
@@ -144,7 +153,7 @@ export default function SignupPage() {
 
               {/* Phone Field */}
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-amber-800 mb-2">
+                <label htmlFor="phone" className="block text-sm font-medium text-stone-700 mb-2">
                   Phone Number
                 </label>
                 <input
@@ -153,8 +162,8 @@ export default function SignupPage() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition ${
-                    errors.phone ? 'border-red-300' : 'border-amber-300'
+                  className={`w-full px-4 py-3 border rounded-xl bg-white/60 placeholder-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-600 focus:border-transparent transition ${
+                    errors.phone ? 'border-red-300' : 'border-stone-200'
                   }`}
                   placeholder="(+94) 712345678"
                 />
@@ -165,7 +174,7 @@ export default function SignupPage() {
 
               {/* Password Fields */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-amber-800 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-stone-700 mb-2">
                   Password
                 </label>
                 <input
@@ -174,8 +183,8 @@ export default function SignupPage() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition ${
-                    errors.password ? 'border-red-300' : 'border-amber-300'
+                  className={`w-full px-4 py-3 border rounded-xl bg-white/60 placeholder-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-600 focus:border-transparent transition ${
+                    errors.password ? 'border-red-300' : 'border-stone-200'
                   }`}
                   placeholder="Create a password"
                 />
@@ -185,7 +194,7 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-amber-800 mb-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-stone-700 mb-2">
                   Confirm Password
                 </label>
                 <input
@@ -194,8 +203,8 @@ export default function SignupPage() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition ${
-                    errors.confirmPassword ? 'border-red-300' : 'border-amber-300'
+                  className={`w-full px-4 py-3 border rounded-xl bg-white/60 placeholder-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-600 focus:border-transparent transition ${
+                    errors.confirmPassword ? 'border-red-300' : 'border-stone-200'
                   }`}
                   placeholder="Confirm your password"
                 />
@@ -207,7 +216,7 @@ export default function SignupPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-amber-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition duration-200 transform hover:scale-[1.02]"
+                className="w-full bg-gradient-to-r from-amber-700 via-orange-600 to-amber-700 text-white py-3 px-4 rounded-xl font-semibold shadow-lg shadow-amber-200/60 hover:shadow-amber-300/70 hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-amber-600 focus:ring-offset-2 transition duration-200 transform hover:-translate-y-[1px]"
               >
                 Create Account
               </button>
@@ -215,35 +224,35 @@ export default function SignupPage() {
 
             {/* Divider */}
             <div className="my-6 flex items-center">
-              <div className="flex-1 border-t border-amber-200"></div>
-              <span className="px-4 text-sm text-amber-600">or</span>
-              <div className="flex-1 border-t border-amber-200"></div>
+              <div className="flex-1 border-t border-stone-200"></div>
+              <span className="px-4 text-xs uppercase tracking-wider text-stone-500">or</span>
+              <div className="flex-1 border-t border-stone-200"></div>
             </div>
 
             {/* Social Signup */}
             <div className="space-y-3">
-              <button className="w-full bg-white border border-amber-300 text-amber-800 py-3 px-4 rounded-lg font-medium hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+              <button className="w-full bg-white/80 backdrop-blur-sm border border-stone-200 text-stone-800 py-3 px-4 rounded-xl font-medium hover:bg-white focus:outline-none focus:ring-2 focus:ring-amber-600 transition shadow-sm">
                 Continue with Google
               </button>
-              <button className="w-full bg-white border border-amber-300 text-amber-800 py-3 px-4 rounded-lg font-medium hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+              <button className="w-full bg-white/80 backdrop-blur-sm border border-stone-200 text-stone-800 py-3 px-4 rounded-xl font-medium hover:bg-white focus:outline-none focus:ring-2 focus:ring-amber-600 transition shadow-sm">
                 Continue with Facebook
               </button>
             </div>
 
             {/* Login Link */}
-            <p className="text-center mt-6 text-amber-700">
+            <p className="text-center mt-6 text-stone-600">
               Already have an account?{' '}
-              <Link href="/login" className="text-amber-600 hover:text-amber-800 font-semibold underline">
+              <Link href="/login" className="text-amber-800 hover:text-amber-900 font-semibold underline underline-offset-4 decoration-2">
                 Sign in here
               </Link>
             </p>
           </div>
 
           {/* Terms */}
-          <p className="text-center mt-4 text-xs text-amber-600">
+          <p className="text-center mt-4 text-xs text-stone-600">
             By creating an account, you agree to our{' '}
-            <a href="#" className="underline hover:text-amber-800">Terms of Service</a> and{' '}
-            <a href="#" className="underline hover:text-amber-800">Privacy Policy</a>
+            <a href="#" className="underline underline-offset-4 decoration-2 hover:text-amber-900">Terms of Service</a> and{' '}
+            <a href="#" className="underline underline-offset-4 decoration-2 hover:text-amber-900">Privacy Policy</a>
           </p>
         </div>
       </div>
