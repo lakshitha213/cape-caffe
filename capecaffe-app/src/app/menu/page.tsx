@@ -1,5 +1,6 @@
 "use client";
 
+import ContactUs from "@/ContactUs/ContactUs";
 import Navbar from "@/Navigation bar/Navbar";
 import React from "react";
 
@@ -133,6 +134,7 @@ export default function Page() {
 					</button>
 				</div>
 			</div>
+			<ContactUs/>
 		</div>
 	);
 } 

@@ -12,6 +12,7 @@ export default function LoginPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -42,11 +43,64 @@ export default function LoginPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Handle login logic here
-      console.log('Form submitted:', formData);
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Send data to backend API
+      const response = await fetch('http://127.0.0.1:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          rememberMe: formData.rememberMe
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Success - user authenticated
+        console.log('Login successful:', result.user);
+        
+        // Save JWT token for authentication
+        localStorage.setItem('token', result.token);
+        
+        // Show success message
+        alert('Login successful! Welcome back to Cape Caffe!');
+        
+        // Clear form
+        setFormData({
+          email: '',
+          password: '',
+          rememberMe: false
+        });
+        
+        // Redirect to menu page
+        window.location.href = '/menu';
+        
+      } else {
+        // Handle errors from backend
+        if (result.errors) {
+          setErrors(result.errors);
+        } else {
+          alert(result.message || 'Login failed. Please try again.');
+        }
+      }
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('Network error. Please check if the backend server is running.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -142,9 +196,14 @@ export default function LoginPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-amber-700 via-orange-600 to-amber-700 text-white py-3 px-4 rounded-xl font-semibold shadow-lg shadow-amber-200/60 hover:shadow-amber-300/70 hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-amber-600 focus:ring-offset-2 transition duration-200 transform hover:-translate-y-[1px]"
+                disabled={loading}
+                className={`w-full py-3 px-4 rounded-xl font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-600 focus:ring-offset-2 transition duration-200 transform ${
+                  loading 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-gradient-to-r from-amber-700 via-orange-600 to-amber-700 text-white shadow-amber-200/60 hover:shadow-amber-300/70 hover:brightness-105 hover:-translate-y-[1px]'
+                }`}
               >
-                Sign In
+                {loading ? 'Signing In...' : 'Sign In'}
               </button>
             </form>
 
