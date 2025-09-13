@@ -20,7 +20,8 @@ const AddProduct: React.FC = () => {
   });
 
   const [preview, setPreview] = useState<string | null>(null);
-  const [message, setMessage] = useState<string>(""); // <-- success message
+  const [message, setMessage] = useState<string>(""); 
+  const [error, setError] = useState<string>(""); 
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -42,6 +43,8 @@ const AddProduct: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setMessage("");
+    setError("");
 
     const formData = new FormData();
     formData.append("name", form.name);
@@ -51,24 +54,37 @@ const AddProduct: React.FC = () => {
     if (form.image) formData.append("image", form.image);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/products/add", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+  const res = await axios.post(
+    "http://localhost:5000/api/products/add",
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
 
-      setMessage(res.data.message); // <-- show success message
-      console.log("Product added:", res.data.product);
+  console.log("Response from server:", res.data);
 
-      // Reset form
-      setForm({ name: "", price: "", description: "", category: "", image: null });
-      setPreview(null);
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response?.data?.message) {
-        setMessage(err.response.data.message);
-      } else {
-        setMessage("Error adding product");
-      }
-      console.error("Add product error:", err);
-    }
+  if (res.data.success) {
+    // Show backend message OR fallback
+    setMessage(res.data.message || "✅ Product added successfully!");
+    setError("");
+
+    // Reset form
+    setForm({ name: "", price: "", description: "", category: "", image: null });
+    setPreview(null);
+  } else {
+    // Backend responded but with failure
+    setError(res.data.message || "❌ Failed to add product");
+    setMessage("");
+  }
+} catch (err: unknown) {
+  if (axios.isAxiosError(err) && err.response?.data?.message) {
+    setError(err.response.data.message);
+  } else {
+    setError("❌ Error adding product");
+  }
+  setMessage(""); // clear success msg
+  console.error("Add product error:", err);
+}
+
   };
 
   return (
@@ -78,12 +94,22 @@ const AddProduct: React.FC = () => {
         <p className="text-gray-600">
           Fill in the details below to add a new product to your catalog.
         </p>
+
+        {/* Success message */}
         {message && (
           <p className="mt-4 p-3 bg-green-100 text-green-800 rounded">
             {message}
           </p>
         )}
+
+        {/* Error message */}
+        {error && (
+          <p className="mt-4 p-3 bg-red-100 text-red-800 rounded">
+            {error}
+          </p>
+        )}
       </div>
+
       <form
         onSubmit={handleSubmit}
         className="bg-white rounded-xl shadow-sm p-6"
@@ -142,82 +168,81 @@ const AddProduct: React.FC = () => {
               required
             >
               <option value="">Select a category</option>
-              <option value="electronics">Espresso</option>
-              <option value="electronics">Doppio</option>
-              <option value="electronics">Americano</option>
-              <option value="electronics">Latte</option>
-              <option value="electronics">Cappuccino</option>
-              <option value="electronics">Macchiato</option>
-              <option value="electronics">Flat White</option>
-              <option value="electronics">Mocha</option>
-              <option value="electronics">Cortado</option>
-              <option value="electronics">Iced Coffee</option>
-              <option value="electronics">Cold Brew</option>
-              <option value="electronics">Nitro Cold Brew</option>
-              <option value="electronics">Iced Latte</option>
-              <option value="electronics">Iced Americano</option>
-              <option value="electronics">Frappe / Frappuccino</option>
-              <option value="electronics">Affogato</option>
-              <option value="electronics">Irish Coffee</option>
-              <option value="electronics">Turkish Coffee</option>
-              <option value="electronics">Vietnamese Coffee</option>
-              <option value="electronics">Café au Lait</option>
-              <option value="electronics">Café Cubano</option>
-              <option value="electronics">Café de Olla</option>
-              <option value="electronics">Kopi</option>
+              <option value="espresso">Espresso</option>
+              <option value="doppio">Doppio</option>
+              <option value="americano">Americano</option>
+              <option value="latte">Latte</option>
+              <option value="cappuccino">Cappuccino</option>
+              <option value="macchiato">Macchiato</option>
+              <option value="flat_white">Flat White</option>
+              <option value="mocha">Mocha</option>
+              <option value="cortado">Cortado</option>
+              <option value="iced_coffee">Iced Coffee</option>
+              <option value="cold_brew">Cold Brew</option>
+              <option value="nitro_cold_brew">Nitro Cold Brew</option>
+              <option value="iced_latte">Iced Latte</option>
+              <option value="iced_americano">Iced Americano</option>
+              <option value="frappe">Frappe / Frappuccino</option>
+              <option value="affogato">Affogato</option>
+              <option value="irish_coffee">Irish Coffee</option>
+              <option value="turkish_coffee">Turkish Coffee</option>
+              <option value="vietnamese_coffee">Vietnamese Coffee</option>
+              <option value="cafe_au_lait">Café au Lait</option>
+              <option value="cafe_cubano">Café Cubano</option>
+              <option value="cafe_de_olla">Café de Olla</option>
+              <option value="kopi">Kopi</option>
+            </select>
+          </div>
 
-          </select>
-        </div>
-
-        {/* Image Upload */}
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-            <Image className="w-4 h-4" />
-            Upload Image
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus-ring transition-all"
-          />
-          {preview && (
-            <img
-              src={preview}
-              alt="Preview"
-              className="mt-2 w-32 h-32 object-cover rounded-lg border"
+          {/* Image Upload */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+              <Image className="w-4 h-4" />
+              Upload Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus-ring transition-all"
             />
-          )}
+            {preview && (
+              <img
+                src={preview}
+                alt="Preview"
+                className="mt-2 w-32 h-32 object-cover rounded-lg border"
+              />
+            )}
+          </div>
         </div>
+
+        {/* Description */}
+        <div className="flex flex-col gap-2 mb-6">
+          <label className="text-sm font-medium text-gray-700">Description</label>
+          <textarea
+            name="description"
+            placeholder="Enter product description"
+            value={form.description}
+            onChange={handleChange}
+            rows={4}
+            className="w-full p-3 border border-gray-300 rounded-lg focus-ring transition-all resize-none"
+            required
+          ></textarea>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+          style={{
+            background: "linear-gradient(to right, #2563eb, #1d4ed8)",
+          }}
+        >
+          <Plus className="w-5 h-5" />
+          Add Product
+        </button>
+      </form>
     </div>
-
-        {/* Description */ }
-  <div className="flex flex-col gap-2 mb-6">
-    <label className="text-sm font-medium text-gray-700">Description</label>
-    <textarea
-      name="description"
-      placeholder="Enter product description"
-      value={form.description}
-      onChange={handleChange}
-      rows={4}
-      className="w-full p-3 border border-gray-300 rounded-lg focus-ring transition-all resize-none"
-      required
-    ></textarea>
-  </div>
-
-  {/* Submit Button */ }
-  <button
-    type="submit"
-    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
-    style={{
-      background: "linear-gradient(to right, #2563eb, #1d4ed8)",
-    }}
-  >
-    <Plus className="w-5 h-5" />
-    Add Product
-  </button>
-      </form >
-    </div >
   );
 };
 

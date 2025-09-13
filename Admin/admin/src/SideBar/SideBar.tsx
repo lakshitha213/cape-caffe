@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingCart, PackagePlus } from "lucide-react";
+import { ShoppingCart, PackagePlus, Package } from "lucide-react";
 import capeLogo from "../assets/CApe caffe.png";
 
 const Sidebar: React.FC = () => {
@@ -46,6 +46,18 @@ const Sidebar: React.FC = () => {
         >
           <PackagePlus className="w-5 h-5" />
           Add Product
+        </Link>
+        
+         <Link
+          to="/admin/products"
+          className={`flex items-center gap-2 p-3 rounded-lg transition-all ${
+            isActive("/admin/products")
+              ? "bg-blue-600 text-white"
+              : "text-gray-300 hover:bg-gray-800"
+          }`}
+        >
+          <Package className="w-5 h-5"/>
+          Products
         </Link>
       </nav>
     </div>

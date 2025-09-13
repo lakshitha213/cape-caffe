@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import AdminLayout from "./Home/Home";
 import Orders from "./Order/Order";
 import AddProduct from "./AddProduct/AddProduct";
+import Product from "./Product/Product";
 
 const App: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
           <Route index element={<Navigate to="orders" replace />} />
           <Route path="orders" element={<Orders />} />
           <Route path="add-product" element={<AddProduct />} />
+          <Route path = "Products" element = {<Product/>}/>
         </Route>
       </Routes>
     </Router>
