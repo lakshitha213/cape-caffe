@@ -13,7 +13,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
     const { name, price, description, category } = req.body;
 
     if (!req.file) {
-      return res.status(400).json({ message: "Image is required" });
+      return res.status(400).json({ success: false, message: "Image is required" });
     }
 
     const newProduct = new Product({
@@ -23,15 +23,24 @@ router.post("/add", upload.single("image"), async (req, res) => {
       category,
       image: {
         data: req.file.buffer,
-        contentType: req.file.mimetype
-      }
+        contentType: req.file.mimetype,
+      },
     });
 
-    await newProduct.save();
-    res.status(201).json({ message: "Product added successfully", product: newProduct });
+    const savedProduct = await newProduct.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Product added successfully",
+      product: savedProduct,
+    });
   } catch (error) {
     console.error("❌ Add product error:", error);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 });
 
@@ -41,7 +50,7 @@ router.get("/", async (req, res) => {
     const products = await Product.find();
     res.json(products);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching products", error: err });
+    res.status(500).json({ success: false, message: "Error fetching products", error: err });
   }
 });
 
@@ -61,6 +70,19 @@ router.get("/:id/image", async (req, res) => {
   }
 });
 
+// Delete a product by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+    res.json({ success: true, message: "Product deleted successfully" });
+  } catch (err) {
+    console.error("❌ Delete product error:", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
 
 
 module.exports = router;
