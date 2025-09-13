@@ -25,13 +25,10 @@ export default function MenuPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // 👇 Change backend URL if your server runs on another port/domain
         const response = await fetch("http://localhost:5000/api/products");
-
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }
-
         const data = await response.json();
         setProducts(data);
       } catch (err) {
@@ -41,7 +38,6 @@ export default function MenuPage() {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
@@ -68,24 +64,29 @@ export default function MenuPage() {
   }
 
   return (
-    <div>
+    <div className="bg-amber-50">
       <Navbar />
       <div className="pt-24 pb-16 px-4 max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-amber-900 mb-2">Our Menu</h1>
-          <p className="text-amber-700 max-w-2xl mx-auto">
-            Discover our handcrafted coffee selections made with premium beans sourced
-            from sustainable farms around the world.
+        {/* Page Header */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-extrabold text-amber-900 mb-4 tracking-wide">
+            Our Menu
+          </h1>
+          <p className="text-lg text-amber-700 max-w-2xl mx-auto leading-relaxed">
+            Discover our handcrafted coffee creations made with <br />
+            <span className="font-semibold">premium beans</span> from sustainable farms around the world.
           </p>
         </div>
 
+        {/* Error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-8">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-8 shadow-sm">
             <p className="font-semibold">Unable to load menu</p>
             <p className="text-sm">{error}</p>
           </div>
         )}
 
+        {/* Categories */}
         {Object.keys(categorizedItems).length === 0 ? (
           <div className="text-center py-12">
             <h2 className="text-2xl font-semibold text-amber-800 mb-4">
@@ -97,52 +98,47 @@ export default function MenuPage() {
           </div>
         ) : (
           Object.entries(categorizedItems).map(([category, items]) => (
-            <div key={category} className="mb-16">
-              <h2 className="text-2xl font-semibold text-amber-800 border-b-2 border-amber-300 pb-2 mb-6">
+            <div key={category} className="mb-20">
+              <h2 className="text-3xl font-bold text-amber-900 border-b-4 border-amber-400 inline-block pb-2 mb-10">
                 {category}
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 {items.map((item) => (
                   <div
                     key={item._id}
-                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                    className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden group"
                   >
                     <div className="flex">
-                      <div className="w-1/3 relative">
+                      {/* Image */}
+                      <div className="w-1/3 relative overflow-hidden">
                         <Image
                           src={`http://localhost:5000/api/products/${item._id}/image`}
                           alt={item.name}
                           width={300}
                           height={300}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            // fallback if image fails
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = "none";
-                            const fallbackDiv =
-                              target.nextElementSibling as HTMLElement | null;
-                            if (fallbackDiv) {
-                              fallbackDiv.style.display = "flex";
-                            }
-                          }}
+                          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                           unoptimized
                         />
-                        <div className="absolute inset-0 bg-amber-200 flex items-center justify-center hidden">
-                          <span className="text-amber-700 text-sm">Coffee Image</span>
-                        </div>
                       </div>
-                      <div className="w-2/3 p-4">
-                        <div className="flex justify-between items-start">
-                          <h3 className="text-lg font-semibold text-amber-900">
-                            {item.name}
-                          </h3>
-                          <span className="text-amber-700 font-bold">
-                            ${item.price.toFixed(2)}
-                          </span>
+
+                      {/* Info */}
+                      <div className="w-2/3 p-6 flex flex-col justify-between">
+                        <div>
+                          <div className="flex justify-between items-start">
+                            <h3 className="text-xl font-semibold text-amber-900">
+                              {item.name}
+                            </h3>
+                            <span className="text-amber-700 font-bold text-lg">
+                              ${item.price.toFixed(2)}
+                            </span>
+                          </div>
+                          <p className="text-amber-600 text-sm mt-2 line-clamp-3">
+                            {item.description}
+                          </p>
                         </div>
-                        <p className="text-amber-600 text-sm mt-2">{item.description}</p>
-                        <button className="mt-4 bg-amber-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-amber-700 transition">
+
+                        <button className="mt-4 bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-700 transition">
                           Add to Order
                         </button>
                       </div>
@@ -154,13 +150,15 @@ export default function MenuPage() {
           ))
         )}
 
-        <div className="bg-amber-100 rounded-xl p-6 text-center mt-12">
-          <h2 className="text-2xl font-bold text-amber-900 mb-2">Daily Special</h2>
-          <p className="text-amber-700 mb-4">
-            Try our featured drink of the day:{" "}
-            <span className="font-semibold">Hazelnut Latte</span> - 20% off!
+        {/* Daily Special */}
+        <div className="bg-gradient-to-r from-amber-200 to-amber-100 rounded-2xl p-10 text-center shadow-lg mt-20">
+          <h2 className="text-3xl font-bold text-amber-900 mb-4">✨ Daily Special ✨</h2>
+          <p className="text-amber-800 mb-6 text-lg">
+            Today&apos;s featured drink:{" "}
+            <span className="font-semibold text-amber-900">Hazelnut Latte</span>{" "}
+            — <span className="text-green-700 font-bold">20% Off</span>!
           </p>
-          <button className="bg-amber-700 text-white px-6 py-2 rounded-lg hover:bg-amber-800 transition">
+          <button className="bg-amber-700 text-white px-6 py-3 rounded-xl text-lg font-medium hover:bg-amber-800 transition">
             View Today&apos;s Specials
           </button>
         </div>

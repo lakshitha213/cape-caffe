@@ -1,17 +1,49 @@
 "use client";
-import React from 'react';
-import Image from 'next/image';
-import capeLogo from '../../Assets/CApe caffe.png';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation'; // Use next/navigation instead of next/router
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import capeLogo from "../../Assets/CApe caffe.png";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import axios from "axios";
+
+type ProductType = {
+  _id: string;
+  name: string;
+  category: string;
+  price: number;
+  description: string;
+};
 
 const Navbar = () => {
-  const pathname = usePathname(); // Get current path for active styling
-  
-  // Helper function to check if a link is active
-  const isActive = (path: string) => {
-    return pathname === path;
-  };
+  const pathname = usePathname();
+  const isActive = (path: string) => pathname === path;
+
+  // Search state
+  const [search, setSearch] = useState("");
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
+
+  // Fetch products
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/products")
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error("❌ Fetch error:", err));
+  }, []);
+
+  // Filter products based on search input
+  useEffect(() => {
+    if (!search) {
+      setFilteredProducts([]);
+      return;
+    }
+    const filtered = products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.category.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  }, [search, products]);
 
   return (
     <div>
@@ -27,43 +59,65 @@ const Navbar = () => {
             <h1 className="font-bold italic text-xl whitespace-nowrap">Cape Caffe</h1>
           </Link>
 
-          {/* Spacer before search bar */}
-          <div className="flex-1 flex justify-center">
+          {/* Search Bar */}
+          <div className="flex-1 flex justify-center relative">
             <input
               type="text"
-              placeholder="Search..."
-              className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Search by product or category..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
+
+            {/* Dropdown Results */}
+            {filteredProducts.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 max-h-64 overflow-y-auto bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                {filteredProducts.map((product) => (
+                  <Link key={product._id} href={`/menu#${product._id}`}>
+                    <div className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                      {/* Optimized Product Image */}
+                      <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 relative">
+                        <Image
+                          src={`http://localhost:5000/api/products/${product._id}/image`}
+                          alt={product.name}
+                          fill
+                          className="object-cover"
+                          unoptimized // remove this if you want Next.js optimization
+                        />
+                      </div>
+
+                      {/* Name & Category */}
+                      <div className="flex flex-col">
+                        <p className="font-semibold text-gray-800 text-sm md:text-base">
+                          {product.name}
+                        </p>
+                        <p className="text-gray-500 text-xs md:text-sm">{product.category}</p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Navigation Links */}
           <div className="flex items-center gap-6 ml-4">
             <Link href="/">
-              <h2 className={`hover:text-blue-600 transition ${isActive('/') ? 'text-blue-600 font-bold' : ''}`}>
-                Home
-              </h2>
+              <h2 className={`hover:text-blue-600 transition ${isActive('/') ? 'text-blue-600 font-bold' : ''}`}>Home</h2>
             </Link>
             <Link href="/menu">
-              <h2 className={`hover:text-blue-600 transition ${isActive('/menu') ? 'text-blue-600 font-bold' : ''}`}>
-                Menu
-              </h2>
+              <h2 className={`hover:text-blue-600 transition ${isActive('/menu') ? 'text-blue-600 font-bold' : ''}`}>Menu</h2>
             </Link>
             <Link href="/contact">
-              <h2 className={`hover:text-blue-600 transition ${isActive('/contact') ? 'text-blue-600 font-bold' : ''}`}>
-                Contact
-              </h2>
+              <h2 className={`hover:text-blue-600 transition ${isActive('/contact') ? 'text-blue-600 font-bold' : ''}`}>Contact</h2>
             </Link>
             <Link href="/about">
-              <h2 className={`hover:text-blue-600 transition ${isActive('/about') ? 'text-blue-600 font-bold' : ''}`}>
-                About - Us
-              </h2>
+              <h2 className={`hover:text-blue-600 transition ${isActive('/about') ? 'text-blue-600 font-bold' : ''}`}>About - Us</h2>
             </Link>
-
-            {/* Sign Up Button */}
             <Link href="/signup">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-              SignUp
-            </button>
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                SignUp
+              </button>
             </Link>
           </div>
         </div>
