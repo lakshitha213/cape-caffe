@@ -1,9 +1,10 @@
 "use client";
 
-import ContactUs from "@/ContactUs/ContactUs";
-import Navbar from "@/Navigation bar/Navbar";
 import React, { useEffect, useState } from "react";
+import Navbar from "@/Navigation bar/Navbar";
+import ContactUs from "@/ContactUs/ContactUs";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Product {
   _id: string;
@@ -105,45 +106,37 @@ export default function MenuPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 {items.map((item) => (
-                  <div
-                    key={item._id}
-                    className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden group"
-                  >
-                    <div className="flex">
-                      {/* Image */}
-                      <div className="w-1/3 relative overflow-hidden">
-                        <Image
-                          src={`http://localhost:5000/api/products/${item._id}/image`}
-                          alt={item.name}
-                          width={300}
-                          height={300}
-                          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                          unoptimized
-                        />
-                      </div>
-
-                      {/* Info */}
-                      <div className="w-2/3 p-6 flex flex-col justify-between">
-                        <div>
-                          <div className="flex justify-between items-start">
-                            <h3 className="text-xl font-semibold text-amber-900">
-                              {item.name}
-                            </h3>
-                            <span className="text-amber-700 font-bold text-lg">
-                              ${item.price.toFixed(2)}
-                            </span>
-                          </div>
-                          <p className="text-amber-600 text-sm mt-2 line-clamp-3">
-                            {item.description}
-                          </p>
+                  <Link key={item._id} href={`/products/${item._id}`}>
+                    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden group cursor-pointer">
+                      <div className="flex">
+                        {/* Image */}
+                        <div className="w-1/3 relative overflow-hidden h-40 md:h-48">
+                          <Image
+                            src={`http://localhost:5000/api/products/${item._id}/image`}
+                            alt={item.name}
+                            width={300}
+                            height={300}
+                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                            unoptimized
+                          />
                         </div>
 
-                        <button className="mt-4 bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-700 transition">
-                          Add to Order
-                        </button>
+                        {/* Info */}
+                        <div className="w-2/3 p-6 flex flex-col justify-between">
+                          <div>
+                            <div className="flex justify-between items-start">
+                              <h3 className="text-xl font-semibold text-amber-900">{item.name}</h3>
+                              <span className="text-amber-700 font-bold text-lg">${item.price.toFixed(2)}</span>
+                            </div>
+                            <p className="text-amber-600 text-sm mt-2 line-clamp-3">{item.description}</p>
+                          </div>
+                          <button className="mt-4 bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-700 transition">
+                            Add to Order
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
