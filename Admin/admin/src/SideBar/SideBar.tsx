@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ShoppingCart, PackagePlus, Package } from "lucide-react";
 import capeLogo from "../assets/CApe caffe.png";
+import "./SideBar.css"; // 👈 Import CSS file
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
@@ -9,28 +10,18 @@ const Sidebar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="bg-gray-900 text-white p-5 flex flex-col fixed left-0 top-0 min-h-screen min-w-[220px] max-w-[280px]">
+    <div className="sidebar">
       {/* Logo */}
-      <div className="mb-8 flex items-center gap-3">
-        <img
-          src={capeLogo}
-          alt="Cape caffe Logo"
-          className="w-2 h-2 object-contain rounded"
-          width={"50"}
-          height={"50"}
-        />
-        <h1 className="text-xl font-bold">Admin Panel</h1>
+      <div className="sidebar-logo">
+        <img src={capeLogo} alt="Cape caffe Logo" />
+        <h1>Admin Panel</h1>
       </div>
 
       {/* Navigation */}
-      <nav className="flex flex-col gap-2 flex-1">
+      <nav>
         <Link
           to="/admin/orders"
-          className={`flex items-center gap-2 p-3 rounded-lg transition-all ${
-            isActive("/admin/orders")
-              ? "bg-blue-600 text-white"
-              : "text-gray-300 hover:bg-gray-800"
-          }`}
+          className={`sidebar-link ${isActive("/admin/orders") ? "active" : ""}`}
         >
           <ShoppingCart className="w-5 h-5" />
           Orders
@@ -38,25 +29,21 @@ const Sidebar: React.FC = () => {
 
         <Link
           to="/admin/add-product"
-          className={`flex items-center gap-2 p-3 rounded-lg transition-all ${
-            isActive("/admin/add-product")
-              ? "bg-blue-600 text-white"
-              : "text-gray-300 hover:bg-gray-800"
+          className={`sidebar-link ${
+            isActive("/admin/add-product") ? "active" : ""
           }`}
         >
           <PackagePlus className="w-5 h-5" />
           Add Product
         </Link>
-        
-         <Link
+
+        <Link
           to="/admin/products"
-          className={`flex items-center gap-2 p-3 rounded-lg transition-all ${
-            isActive("/admin/products")
-              ? "bg-blue-600 text-white"
-              : "text-gray-300 hover:bg-gray-800"
+          className={`sidebar-link ${
+            isActive("/admin/products") ? "active" : ""
           }`}
         >
-          <Package className="w-5 h-5"/>
+          <Package className="w-5 h-5" />
           Products
         </Link>
       </nav>
