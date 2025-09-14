@@ -1,0 +1,64 @@
+/* Sidebar.css */
+
+.sidebar {
+  background-color: #111827; /* Tailwind bg-gray-900 */
+  color: white;
+  padding: 1.25rem; /* Tailwind p-5 */
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  min-height: 100vh;
+  min-width: 220px;
+  max-width: 280px;
+}
+
+/* Logo section */
+.sidebar-logo {
+  margin-bottom: 2rem; /* Tailwind mb-8 */
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sidebar-logo img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 0.25rem; /* Tailwind rounded */
+}
+
+.sidebar-logo h1 {
+  font-size: 1.25rem; /* Tailwind text-xl */
+  font-weight: 700;   /* Tailwind font-bold */
+}
+
+/* Navigation */
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Tailwind gap-2 */
+  flex: 1;
+}
+
+/* Links */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Tailwind gap-2 */
+  padding: 0.75rem; /* Tailwind p-3 */
+  border-radius: 0.5rem; /* Tailwind rounded-lg */
+  transition: all 0.2s ease;
+  color: #d1d5db; /* Tailwind text-gray-300 */
+  text-decoration: none;
+}
+
+.sidebar-link:hover {
+  background-color: #1f2937; /* Tailwind hover:bg-gray-800 */
+}
+
+.sidebar-link.active {
+  background-color: #2563eb; /* Tailwind bg-blue-600 */
+  color: white;
+}
