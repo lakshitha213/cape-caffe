@@ -12,17 +12,18 @@ const authenticateToken = (req, res, next) => {
   const token = authHeader && authHeader.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'Access token required' });
 
-  jwt.verify(token, JWT_SECRET, (err, user) => {
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
     if (err) return res.status(403).json({ message: 'Invalid or expired token' });
-    req.user = user;
+    req.user = decoded; // decoded contains { userId, email }
     next();
   });
 };
 
-// Signup
+// ✅ Signup
 router.post('/signup', async (req, res) => {
   try {
     const { firstName, lastName, email, password, phone } = req.body;
+
     if (!firstName || !lastName || !email || !password || !phone) {
       return res.status(400).json({ message: 'All fields are required' });
     }
@@ -47,7 +48,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// Login
+// ✅ Login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -71,11 +72,16 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Protected profile route
+// ✅ Protected profile route (always fetches from DB)
 router.get('/profile', authenticateToken, async (req, res) => {
-  const user = await User.findById(req.user.userId).select('-password');
-  if (!user) return res.status(404).json({ message: 'User not found' });
-  res.json({ user });
+  try {
+    const user = await User.findById(req.user.userId).select('-password'); // exclude password
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;

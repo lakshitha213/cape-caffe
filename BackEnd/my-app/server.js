@@ -6,8 +6,9 @@ require('dotenv').config();
 // Import routes
 const authRoutes = require('./Route/authRoute');
 const productRoutes = require('./Route/ProductRoutes');
+const cartRoutes = require("./Route/CartRoute");
 
-const app = express();
+const app = express(); // ✅ Initialize app first
 const PORT = process.env.PORT || 5000;
 
 // Middleware
@@ -41,11 +42,13 @@ app.get('/api/health', (req, res) => {
 // Auth routes
 app.use('/api/auth', authRoutes);
 
-//Product routes
+// Product routes
 app.use('/api/products', productRoutes);
 
-app.use("/uploads", express.static("uploads"));
+// Cart routes
+app.use("/api/cart", cartRoutes); // ✅ Now it works
 
+app.use("/uploads", express.static("uploads"));
 
 // 404 handler
 app.use((req, res) => {

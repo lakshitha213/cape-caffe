@@ -20,7 +20,6 @@ export default function LoginPage() {
       ...prev, 
       [name]: type === 'checkbox' ? checked : value 
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -45,50 +44,37 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       setLoading(true);
       
-      // Send data to backend API
       const response = await fetch('http://127.0.0.1:5000/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          rememberMe: formData.rememberMe
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
       });
 
       const result = await response.json();
 
       if (response.ok) {
-        // Success - user authenticated
         console.log('Login successful:', result.user);
         
-        // Save JWT token for authentication
+        // ✅ Save both token and user info
         localStorage.setItem('token', result.token);
-        
-        // Show success message
+        localStorage.setItem('user', JSON.stringify(result.user));
+
+        // ✅ Trigger Navbar update immediately
+        window.dispatchEvent(new Event("storage"));
+
         alert('Login successful! Welcome back to Cape Caffe!');
         
-        // Clear form
-        setFormData({
-          email: '',
-          password: '',
-          rememberMe: false
-        });
+        setFormData({ email: '', password: '', rememberMe: false });
         
         // Redirect to menu page
         window.location.href = '/menu';
         
       } else {
-        // Handle errors from backend
         if (result.errors) {
           setErrors(result.errors);
         } else {
@@ -108,7 +94,7 @@ export default function LoginPage() {
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-stone-50 via-amber-50 to-stone-100">
       <Navbar />
       
-      {/* Decorative background orbs */}
+      {/* Decorative background */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-amber-300/30 blur-3xl"></div>
         <div className="absolute top-40 -right-20 h-80 w-80 rounded-full bg-orange-300/20 blur-[80px]"></div>
@@ -128,7 +114,7 @@ export default function LoginPage() {
           {/* Login Form */}
           <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/40 ring-1 ring-white/50">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Field */}
+              {/* Email */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-2">
                   Email Address
@@ -144,12 +130,10 @@ export default function LoginPage() {
                   }`}
                   placeholder="Enter your email"
                 />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                )}
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
               </div>
 
-              {/* Password Field */}
+              {/* Password */}
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-stone-700 mb-2">
                   Password
@@ -165,9 +149,7 @@ export default function LoginPage() {
                   }`}
                   placeholder="Enter your password"
                 />
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-                )}
+                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
               </div>
 
               {/* Remember Me & Forgot Password */}
@@ -185,15 +167,12 @@ export default function LoginPage() {
                     Remember me
                   </label>
                 </div>
-                <Link 
-                  href="/forgot-password" 
-                  className="text-sm text-amber-800 hover:text-amber-900 underline underline-offset-4 decoration-2"
-                >
+                <Link href="/forgot-password" className="text-sm text-amber-800 hover:text-amber-900 underline underline-offset-4 decoration-2">
                   Forgot password?
                 </Link>
               </div>
 
-              {/* Submit Button */}
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
@@ -233,7 +212,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Additional Info */}
+          {/* Extra Info */}
           <div className="mt-6 text-center">
             <p className="text-sm text-stone-600">
               By signing in, you agree to our{' '}

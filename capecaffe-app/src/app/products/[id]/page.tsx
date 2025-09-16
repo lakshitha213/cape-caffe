@@ -25,6 +25,7 @@ const ProductDetailsPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
 
+  // Fetch product from backend
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -45,8 +46,36 @@ const ProductDetailsPage = () => {
     setQuantity(prev => Math.max(1, prev + delta));
   };
 
-  const handleAddToOrder = () => {
-    alert(`${quantity} x ${product?.name} added to order! Total: $${(product?.price! * quantity).toFixed(2)}`);
+  // Add product to cart API call
+  const handleAddToOrder = async () => {
+    try {
+      const token = localStorage.getItem("token"); // JWT saved at login
+      if (!token) {
+        alert("Please log in to add items to your cart.");
+        return;
+      }
+
+      const res = await fetch("http://localhost:5000/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product?._id,
+          quantity,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to add to cart");
+
+      const data = await res.json();
+      alert(`${quantity} x ${product?.name} added to cart! ✅`);
+      console.log("Updated cart:", data.cart);
+    } catch (err) {
+      console.error(err);
+      alert("Error adding to cart");
+    }
   };
 
   if (loading) return <p className="text-center mt-24">Loading...</p>;
@@ -60,7 +89,7 @@ const ProductDetailsPage = () => {
       <Navbar />
       <div className="pt-24 px-4 max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row gap-8 bg-white rounded-2xl shadow-md p-6">
-          {/* Image */}
+          {/* Product Image */}
           <div className="w-full md:w-1/2 relative h-80">
             <Image
               src={`http://localhost:5000/api/products/${product._id}/image`}
@@ -77,7 +106,10 @@ const ProductDetailsPage = () => {
               <h1 className="text-4xl font-bold text-amber-900 mb-4">{product.name}</h1>
               <p className="text-amber-700 text-lg mb-4">{product.description}</p>
               <p className="text-amber-900 font-bold text-2xl mb-4">
-                ${totalPrice} <span className="text-sm font-medium text-amber-700">(${product.price.toFixed(2)} each)</span>
+                ${totalPrice}{" "}
+                <span className="text-sm font-medium text-amber-700">
+                  (${product.price.toFixed(2)} each)
+                </span>
               </p>
 
               {/* Quantity Selector */}
